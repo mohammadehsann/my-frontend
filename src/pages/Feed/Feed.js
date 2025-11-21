@@ -8,7 +8,8 @@ import Paginator from "../../components/Paginator/Paginator";
 import Loader from "../../components/Loader/Loader";
 import ErrorHandler from "../../components/ErrorHandler/ErrorHandler";
 import "./Feed.css";
-const API = "https://my-backend-vnhm.onrender.com";
+const API = process.env.REACT_APP_API;
+
 class Feed extends Component {
   state = {
     isEditing: false,
@@ -38,8 +39,9 @@ class Feed extends Component {
       .catch(this.catchError);
 
     this.loadPosts();
-    const socket = io(`${API}`, {
-      transports: ["websocket", "polling"], // force fallback if needed
+    const socket = io(API, {
+      transports: ["websocket", "polling"],
+      secure: true,
     });
 
     socket.on("connect", () => {
