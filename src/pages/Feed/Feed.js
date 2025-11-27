@@ -56,6 +56,7 @@ class Feed extends Component {
       } else if (data.action === "delete") this.loadPosts();
     });
   }
+
   addPost = (post) => {
     this.setState((prevState) => {
       const updatedPosts = [...prevState.posts];
@@ -71,6 +72,7 @@ class Feed extends Component {
       };
     });
   };
+
   updatePost = (post) => {
     this.setState((prevState) => {
       const updatedPosts = [...prevState.posts];
@@ -113,7 +115,6 @@ class Feed extends Component {
           posts: resData.posts.map((post) => {
             return { ...post, imagePath: post.imageUrl };
           }),
-
           totalPosts: resData.totalItems,
           postsLoading: false,
         });
@@ -168,7 +169,6 @@ class Feed extends Component {
     this.setState({
       editLoading: true,
     });
-    // Set up data (with image!)
     const formData = new FormData();
     formData.append("title", postData.title);
     formData.append("content", postData.content);
@@ -193,13 +193,6 @@ class Feed extends Component {
       })
       .then((resData) => {
         console.log(resData);
-        const post = {
-          _id: resData.post._id,
-          title: resData.post.title,
-          content: resData.post.content,
-          creator: resData.post.creator,
-          createdAt: resData.post.createdAt,
-        };
         this.setState((prevState) => {
           return {
             isEditing: false,
@@ -256,37 +249,45 @@ class Feed extends Component {
   render() {
     return (
       <Fragment>
-        <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
+        {" "}
+        <ErrorHandler
+          error={this.state.error}
+          onHandle={this.errorHandler}
+        />{" "}
         <FeedEdit
           editing={this.state.isEditing}
           selectedPost={this.state.editPost}
           loading={this.state.editLoading}
           onCancelEdit={this.cancelEditHandler}
           onFinishEdit={this.finishEditHandler}
-        />
+        />{" "}
         <section className="feed__status">
+          {" "}
           <form onSubmit={this.statusUpdateHandler}>
+            {" "}
             <Input
               type="text"
               placeholder="Your status"
               control="input"
               onChange={this.statusInputChangeHandler}
               value={this.state.status}
-            />
+            />{" "}
             <Button mode="flat" type="submit">
-              Update
-            </Button>
-          </form>
-        </section>
+              Update{" "}
+            </Button>{" "}
+          </form>{" "}
+        </section>{" "}
         <section className="feed__control">
+          {" "}
           <Button mode="raised" design="accent" onClick={this.newPostHandler}>
-            New Post
-          </Button>
-        </section>
+            New Post{" "}
+          </Button>{" "}
+        </section>{" "}
         <section className="feed">
           {this.state.postsLoading && (
             <div style={{ textAlign: "center", marginTop: "2rem" }}>
-              <Loader />
+              {" "}
+              <Loader />{" "}
             </div>
           )}
 
@@ -305,10 +306,12 @@ class Feed extends Component {
                 <Post
                   key={post._id}
                   id={post._id}
+                  creatorId={post.creator._id} // added ownership
+                  currentUserId={this.props.userId} // added ownership
                   author={post.creator.name}
                   date={new Date(post.createdAt).toLocaleDateString("en-US")}
                   title={post.title}
-                  image={post.imagePath} // 🔥 FIXED — use imagePath instead of imageUrl
+                  image={post.imagePath}
                   content={post.content}
                   onStartEdit={this.startEditPostHandler.bind(this, post._id)}
                   onDelete={this.deletePostHandler.bind(this, post._id)}
